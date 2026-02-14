@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>メモアプリ</title>
+<style>
+body { font-family: sans-serif; padding:20px; }
+input { padding:5px; }
+button { margin-left:5px; }
+li { margin:8px 0; }
+</style>
+</head>
+<body>
+
+<h1>メモアプリ</h1>
+
+<input type="text" id="memoInput" placeholder="メモを入力">
+<button onclick="addMemo()">追加</button>
+
+<ul id="memoList"></ul>
+
+<script>
+async function loadMemos() {
+  const res = await fetch("/memos");
+  const memos = await res.json();
+
+  const list = document.getElementById("memoList");
+  list.innerHTML = "";
+
+  memos.forEach((memo, index) => {
+    const li = document.createElement("li");
+
+    li.textContent = memo + " ";
+
+    const btn = document.createElement("button");
+    btn.textContent = "削除";
+    btn.onclick = () => deleteMemo(index);
+
+    li.appendChild(btn);
+    list.appendChild(li);
+  });
+}
+
+async function addMemo() {
+  const input = document.getElementById("memoInput");
+  if (input.value.trim() === "") return;
+
+  await fetch("/memos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ memo: input.value })
+  });
+
+  input.value = "";
+  loadMemos();
+}
+
+async function deleteMemo(index) {
+  await fetch("/memos/" + index, {
+    method: "DELETE"
+  });
+
+  loadMemos();
+}
+
+window.onload = loadMemos;
+</script>
+
+</body>
+</html>
