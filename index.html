@@ -20,22 +20,28 @@ li { margin:8px 0; }
 
 <ul id="memoList"></ul>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const supabaseUrl = "https://hivxamfcuntyviilmkdl.supabase.co";
+const supabaseKey = "sb_publishable_WvgO-imEBepPVdpe0DxRuA_OnP7PUgp";
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
 async function loadMemos() {
-  const res = await fetch("/memos");
-  const memos = await res.json();
+  const { data, error } = await supabase
+    .from("memos")
+    .select("*")
+    .order("id", { ascending: true });
 
   const list = document.getElementById("memoList");
   list.innerHTML = "";
 
-  memos.forEach((memo, index) => {
+  data.forEach((item) => {
     const li = document.createElement("li");
-
-    li.textContent = memo + " ";
+    li.textContent = item.content + " ";
 
     const btn = document.createElement("button");
     btn.textContent = "削除";
-    btn.onclick = () => deleteMemo(index);
+    btn.onclick = () => deleteMemo(item.id);
 
     li.appendChild(btn);
     list.appendChild(li);
@@ -46,20 +52,19 @@ async function addMemo() {
   const input = document.getElementById("memoInput");
   if (input.value.trim() === "") return;
 
-  await fetch("/memos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ memo: input.value })
-  });
+  await supabase.from("memos").insert([
+    { content: input.value }
+  ]);
 
   input.value = "";
   loadMemos();
 }
 
-async function deleteMemo(index) {
-  await fetch("/memos/" + index, {
-    method: "DELETE"
-  });
+async function deleteMemo(id) {
+  await supabase
+    .from("memos")
+    .delete()
+    .eq("id", id);
 
   loadMemos();
 }

@@ -1,3 +1,18 @@
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm"
+
+const supabaseUrl = "https://hivxamfcuntyviilmkdl.supabase.co"
+const supabaseKey = "sb_publishable_WvgO-imEBepPVdpe0DxRuA_OnP7PUgp"
+
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+
+
+
+
+
+
+
+
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
