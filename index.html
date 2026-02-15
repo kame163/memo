@@ -39,8 +39,6 @@ async function loadMemos() {
     alert("SELECTエラー: " + error.message);
     return;
   }
-      input.value = "";
-      loadMemos();
 
   const list = document.getElementById("memoList");
   list.innerHTML = "";
@@ -56,6 +54,10 @@ async function loadMemos() {
     li.appendChild(btn);
     list.appendChild(li);
   });
+    input.value = "";
+    loadMemos();
+
+
 }
 
 async function addMemo() {
