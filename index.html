@@ -53,9 +53,16 @@ async function addMemo() {
   const input = document.getElementById("memoInput");
   if (input.value.trim() === "") return;
 
-  await db.from("memos").insert([
-    { content: input.value }
-  ]);
+  const { data, error } = await db
+    .from("memos")
+    .insert([{ content: input.value }]);
+
+  console.log("INSERT RESULT:", data, error);
+
+  if (error) {
+    alert("エラー: " + error.message);
+    return;
+  }
 
   input.value = "";
   loadMemos();
