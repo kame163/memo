@@ -33,6 +33,14 @@ async function loadMemos() {
     .select("*")
     .order("id", { ascending: true });
 
+  console.log("SELECT RESULT:", data, error);
+
+  if (error) {
+    alert("SELECTエラー: " + error.message);
+    return;
+  }
+    
+
   const list = document.getElementById("memoList");
   list.innerHTML = "";
 
