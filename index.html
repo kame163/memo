@@ -39,7 +39,8 @@ async function loadMemos() {
     alert("SELECTエラー: " + error.message);
     return;
   }
-    
+      input.value = "";
+      loadMemos();
 
   const list = document.getElementById("memoList");
   list.innerHTML = "";
