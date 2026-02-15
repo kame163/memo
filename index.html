@@ -23,10 +23,12 @@ li { margin:8px 0; }
 <script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+// Supabase設定
 const supabaseUrl = "https://hivxamfcuntyviilmkdl.supabase.co";
 const supabaseKey = "sb_publishable_WvgO-imEBepPVdpe0DxRuA_OnP7PUgp";
 const db = createClient(supabaseUrl, supabaseKey);
 
+// メモ読み込み
 async function loadMemos() {
   const { data, error } = await db
     .from("memos")
@@ -49,29 +51,28 @@ async function loadMemos() {
 
     const btn = document.createElement("button");
     btn.textContent = "削除";
-    btn.onclick = () => deleteMemo(item.id);
+    btn.addEventListener("click", () => deleteMemo(item.id));
 
     li.appendChild(btn);
     list.appendChild(li);
   });
-    input.value = "";
-    loadMemos();
-
-
 }
 
+// メモ追加
 async function addMemo() {
   const input = document.getElementById("memoInput");
+
   if (input.value.trim() === "") return;
 
   const { data, error } = await db
     .from("memos")
-    .insert([{ content: input.value }]);
+    .insert([{ content: input.value }])
+    .select();
 
   console.log("INSERT RESULT:", data, error);
 
   if (error) {
-    alert("エラー: " + error.message);
+    alert("INSERTエラー: " + error.message);
     return;
   }
 
@@ -79,16 +80,26 @@ async function addMemo() {
   loadMemos();
 }
 
+// メモ削除
 async function deleteMemo(id) {
-  await db
+  const { error } = await db
     .from("memos")
     .delete()
     .eq("id", id);
 
+  if (error) {
+    alert("DELETEエラー: " + error.message);
+    return;
+  }
+
   loadMemos();
 }
 
-window.onload = loadMemos;
+// イベント登録
+document.getElementById("addBtn").addEventListener("click", addMemo);
+
+// 初回読み込み
+loadMemos();
 </script>
 
 </body>
